@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,600" rel="stylesheet" type="text/css">
+        <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css">
+        <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <title>Budget_App</title>
+    </head>
+    <body>
+        
+        <div class="top">
+            <div class="budget">
+                <div class="budget__title">
+                    Available Budget in <span class="budget__title--month">{{ date }}</span>:
+                </div>
+                
+                <div class="budget__value">+ {{ "%.2f"|format(total_money) }}</div>
+                
+                <div class="budget__income clearfix">
+                    <div class="budget__income--text">Income</div>
+                    <div class="right">
+                        <div class="budget__income--value">+ {{ "%.2f"|format(total_income)}}</div>
+                        <div class="budget__income--percentage">&nbsp;</div>
+                    </div>
+                </div>
+                
+                <div class="budget__expenses clearfix">
+                    <div class="budget__expenses--text">Expenses</div>
+                    <div class="right clearfix">
+                        <div class="budget__expenses--value">- {{ "%.2f"|format(total_expences) }}</div>
+                        <div class="budget__expenses--percentage">{{ "%.0f" | format(total_expence_percent)}}%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        <div class="bottom">
+            <div class="add">
+                <div class="add__container">
+                    <form action="/submit" method="post" name="select_comp">
+
+
+                            <select class="add__type {{red_focus}}" name="Operations" >
+                                <option name="inc" value="inc" selected>+</option>
+                                <option name="exp" value="exp" >-</option>
+                            </select>
+
+                        <input type="text" name="description" class="add__description" placeholder="Add description" required>
+                        <input type="number" name="total_money" class="add__value" placeholder="Value" required>
+                        <button class="add__btn" type="submit"><i class="ion-ios-checkmark-outline"></i></button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="container clearfix">
+                <div class="income">
+                    <h2 class="income__title">Income</h2>
+                    
+                    <div class="income__list">
+                        {% for income in incomes %}
+                           <div class="item clearfix" id="{{ income.id }}">
+                                <div class="item__description">{{ income.description }}</div>
+                                <div class="right clearfix">
+                                    <div class="item__value">+ {{ "%.2f"|format(income.money) }}</div>
+                                    <div class="item__delete">
+                                        <a href="/delete_inc/{{ income.id }}" class="item__delete&#45;&#45;btn"><i class="ion-ios-close-outline"></i></a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+                
+                
+                
+                <div class="expenses">
+                    <h2 class="expenses__title">Expenses</h2>
+                    
+                    <div class="expenses__list">
+                       {% for expence in expences %}
+                            <form action="/delete" method="post" name="delete_item" >
+                                <div class="item clearfix" id="{{ expence.id }}">
+                                    <div class="item__description"> {{ expence.description }}</div>
+                                    <div class="right clearfix">
+                                        <div class="item__value">- {{ "%.2f"| format(expence.money) }}</div>
+                                        {% if total_income !=0 %}
+                                            <div class="item__percentage">{{ "%.0f" | format(expence.money / total_income * 100)}}%</div>
+                                        {% endif %}
+                                        <div class="item__delete">
+                                            <a href="/delete_exp/{{ expence.id }}" class="item__delete&#45;&#45;btn" ><i class="ion-ios-close-outline"></i></a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                           </form>
+                        {% endfor %}
+
+                        
+                    </div>
+                </div>
+            </div>
+            
+            
+        </div>
+        
+        <script src="app.js"></script>
+    </body>
+</html>
